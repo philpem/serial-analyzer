@@ -28,6 +28,7 @@ public:
 	double mStopBits;
 	AnalyzerEnums::Parity mParity;
 	bool mInverted;
+	bool mInvertedData;
 	bool mUseAutobaud;
 	SerialAnalyzerEnums::Mode mSerialMode;
 
@@ -39,6 +40,7 @@ protected:
 	std::auto_ptr< AnalyzerSettingInterfaceNumberList >	mStopBitsInterface;
 	std::auto_ptr< AnalyzerSettingInterfaceNumberList >	mParityInterface;
 	std::auto_ptr< AnalyzerSettingInterfaceNumberList >	mInvertedInterface;
+	std::auto_ptr< AnalyzerSettingInterfaceNumberList >	mInvertedDataInterface;
 	std::auto_ptr< AnalyzerSettingInterfaceBool >	mUseAutobaudInterface;
 	std::auto_ptr< AnalyzerSettingInterfaceNumberList >	mSerialModeInterface;
 };

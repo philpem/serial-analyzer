@@ -14,6 +14,7 @@ SerialAnalyzerSettings::SerialAnalyzerSettings()
 	mParity( AnalyzerEnums::None ),
 	mShiftOrder( AnalyzerEnums::LsbFirst ),
 	mInverted( false ),
+	mInvertedData( false ),
 	mUseAutobaud( false ),
 	mSerialMode( SerialAnalyzerEnums::Normal )
 {
@@ -78,8 +79,15 @@ SerialAnalyzerSettings::SerialAnalyzerSettings()
 	mInvertedInterface->SetTitleAndTooltip( "Signal inversion", "Specify if the serial signal is inverted" );
 	mInvertedInterface->AddNumber( false, "Non Inverted (Standard)", "" );
 	mInvertedInterface->AddNumber( true, "Inverted", "" );
+	mInvertedInterface->SetNumber( mInverted );
 
-	mInvertedInterface->SetNumber( mInverted );enum Mode { Normal, MpModeRightZeroMeansAddress, MpModeRightOneMeansAddress, MpModeLeftZeroMeansAddress, MpModeLeftOneMeansAddress };
+	mInvertedDataInterface.reset( new AnalyzerSettingInterfaceNumberList() );
+	mInvertedDataInterface->SetTitleAndTooltip( "Data inversion", "Specify if the resulting data should be inverted, e.g. ISO7816 Inverse Convention" );
+	mInvertedDataInterface->AddNumber( false, "Non Inverted (Standard)", "" );
+	mInvertedDataInterface->AddNumber( true, "Inverted", "" );
+	mInvertedDataInterface->SetNumber( mInvertedData );
+
+	enum Mode { Normal, MpModeRightZeroMeansAddress, MpModeRightOneMeansAddress, MpModeLeftZeroMeansAddress, MpModeLeftOneMeansAddress };
 
 	mSerialModeInterface.reset( new AnalyzerSettingInterfaceNumberList() );
 	mSerialModeInterface->SetTitleAndTooltip( "Mode", "" );
@@ -95,6 +103,7 @@ SerialAnalyzerSettings::SerialAnalyzerSettings()
 	AddInterface( mParityInterface.get() );
 	AddInterface( mShiftOrderInterface.get() );
 	AddInterface( mInvertedInterface.get() );
+	AddInterface( mInvertedDataInterface.get() );
 	AddInterface( mSerialModeInterface.get() );
 
 	//AddExportOption( 0, "Export as text/csv file", "text (*.txt);;csv (*.csv)" );
@@ -126,6 +135,7 @@ bool SerialAnalyzerSettings::SetSettingsFromInterfaces()
 	mParity = AnalyzerEnums::Parity( U32( mParityInterface->GetNumber() ) );
 	mShiftOrder =  AnalyzerEnums::ShiftOrder( U32( mShiftOrderInterface->GetNumber() ) );
 	mInverted = bool( U32( mInvertedInterface->GetNumber() ) );
+	mInvertedData = bool( U32( mInvertedDataInterface->GetNumber() ) );
 	mUseAutobaud = mUseAutobaudInterface->GetValue();
 	mSerialMode = SerialAnalyzerEnums::Mode( U32( mSerialModeInterface->GetNumber() ) );
 
@@ -144,6 +154,7 @@ void SerialAnalyzerSettings::UpdateInterfacesFromSettings()
 	mParityInterface->SetNumber( mParity );
 	mShiftOrderInterface->SetNumber( mShiftOrder );
 	mInvertedInterface->SetNumber( mInverted );
+	mInvertedDataInterface->SetNumber( mInvertedData );
 	mUseAutobaudInterface->SetValue( mUseAutobaud );
 	mSerialModeInterface->SetNumber( mSerialMode );
 }
@@ -165,6 +176,7 @@ void SerialAnalyzerSettings::LoadSettings( const char* settings )
 	text_archive >> *(U32*)&mParity;
 	text_archive >> *(U32*)&mShiftOrder;
 	text_archive >> mInverted;
+	text_archive >> mInvertedData;
 
 	//check to make sure loading it actual works befor assigning the result -- do this when adding settings to an anylzer which has been previously released.
 	bool use_autobaud;
@@ -193,6 +205,7 @@ const char* SerialAnalyzerSettings::SaveSettings()
 	text_archive << mParity;
 	text_archive << mShiftOrder;
 	text_archive << mInverted;
+	text_archive << mInvertedData;
 
 	text_archive << mUseAutobaud;
 

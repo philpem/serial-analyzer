@@ -206,6 +206,10 @@ void SerialAnalyzer::WorkerThread()
 			}
 		}
 
+		// if final data needs to be inverted, do so
+		if( mSettings->mInvertedData == true )
+			data = (~data) & bit_mask;
+
 		//ok now record the value!
 		//note that we're not using the mData2 or mType fields for anything, so we won't bother to set them.
 		Frame frame;
@@ -298,12 +302,12 @@ U32 SerialAnalyzer::GetMinimumSampleRateHz()
 
 const char* SerialAnalyzer::GetAnalyzerName() const
 {
-	return "Async Serial";
+	return "Async Serial Enhanced";
 }
 
 const char* GetAnalyzerName()
 {
-	return "Async Serial";
+	return "Async Serial Enhanced";
 }
 
 Analyzer* CreateAnalyzer()
